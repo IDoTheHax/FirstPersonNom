@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "firstpersonnom",
+  "version": "${version}",
+  "name": "FirstPersonNom",
+  "description": "",
+  "authors": [],
+  "contact": {
+    "repo": "https://github.com/IDoTheHax/FirstPersonNom"
+  },
+  "license": "Apache-2.0",
+  "icon": "assets/firstpersonnom/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "net.idothehax.firstpersonnom.client.FirstPersonNomClient"
+    ],
+    "main": [
+      "net.idothehax.firstpersonnom.FirstPersonNom"
+    ]
+  },
+  "mixins": [
+    "firstpersonnom.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
