@@ -53,7 +53,7 @@ public class HeldItemRendererMixin {
 
         h = 1.0F - (float)Math.pow((double)g, 27.0);
         int i = arm == Arm.RIGHT ? 1 : -1;
-        matrices.translate(h * 0.7F * (float)i, h * -0.5F, h * -0.3F); // Adjusted translations
+        matrices.translate(h * 0.85F * (float)i, h * -0.5F, h * -0.3F); // Adjusted translations
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees((float)i * h * EAT_OR_DRINK_Y_ANGLE_MULTIPLIER));
         matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(h * EAT_OR_DRINK_X_ANGLE_MULTIPLIER));
         matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees((float)i * h * EAT_OR_DRINK_Z_ANGLE_MULTIPLIER));
