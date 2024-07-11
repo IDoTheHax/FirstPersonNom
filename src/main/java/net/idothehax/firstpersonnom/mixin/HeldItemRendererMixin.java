@@ -9,6 +9,7 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.client.render.item.HeldItemRenderer;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -30,7 +31,7 @@ public class HeldItemRendererMixin {
     private MinecraftClient client;
 
     @Unique
-    private static final float EAT_OR_DRINK_X_ANGLE_MULTIPLIER = 15.0F;
+    private static final float EAT_OR_DRINK_X_ANGLE_MULTIPLIER = 45.0F;
     @Unique
     private static final float EAT_OR_DRINK_Y_ANGLE_MULTIPLIER = 120.0F;
     @Unique
@@ -53,13 +54,18 @@ public class HeldItemRendererMixin {
 
         h = 1.0F - (float)Math.pow((double)g, 27.0);
         int i = arm == Arm.RIGHT ? 1 : -1;
-        matrices.translate(h * 0.85F * (float)i, h * -0.5F, h * -0.3F); // Adjusted translations
+        matrices.translate(h * 1.4F * (float)i, h * 0.35F, h * -0.7F); // Adjusted translations
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees((float)i * h * EAT_OR_DRINK_Y_ANGLE_MULTIPLIER));
         matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(h * EAT_OR_DRINK_X_ANGLE_MULTIPLIER));
         matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees((float)i * h * EAT_OR_DRINK_Z_ANGLE_MULTIPLIER));
 
         // Ensure the arm is rendered
         renderArmHoldingItem(matrices, client.getBufferBuilders().getEntityVertexConsumers(), client.getEntityRenderDispatcher().getLight(player, tickDelta), 0.0F, 0.0F, arm);
+
+        // Adjust the item position relative to the hand
+        matrices.translate((float)i * 0.3F, -0.45, 1.85F); // Move item into the hand and to the bottom center
+        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-40.0F));
+        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(0.0F));
 
         // Cancel the original method to prevent it from running
         ci.cancel();
@@ -73,11 +79,11 @@ public class HeldItemRendererMixin {
         matrices.push();
 
         // Adjust the arm position
-        matrices.translate(0.125F, -0.98F, -0.5F); // Move the arm forward and slightly downward
-
-        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(92.0F));
-        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(45.0F));
-        matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(f * -41.0F));
+        matrices.translate(0.125F, -1.28F, 1F); // Move the arm forward and slightly downward
+        matrices.scale(2f, 2f, 2f);
+        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(0.0F));
+        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90.0F));
+        matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(f * -71.0F));
 
         AbstractClientPlayerEntity playerEntity = this.client.player;
         if (playerEntity == null) {
@@ -101,12 +107,12 @@ public class HeldItemRendererMixin {
         }
 
         // Debug: Render a small cube to represent the item
-        matrices.push();
+        /*matrices.push();
         matrices.translate(f * 0.05F, -0.3F, -0.15F);
-        matrices.scale(0.1F, 0.1F, 0.1F);
+        matrices.scale(1F, 1F, 1F);
         VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEntitySolid(new Identifier("minecraft", "textures/block/stone.png")));
         MinecraftClient.getInstance().getBlockRenderManager().renderBlockAsEntity(Blocks.STONE.getDefaultState(), matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV);
-        matrices.pop();
+        matrices.pop();*/
 
         matrices.pop();
     }
