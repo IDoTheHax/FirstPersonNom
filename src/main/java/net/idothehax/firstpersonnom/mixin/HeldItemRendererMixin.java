@@ -1,22 +1,20 @@
 package net.idothehax.firstpersonnom.mixin;
 
-import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.client.render.item.HeldItemRenderer;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Arm;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -25,10 +23,28 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(HeldItemRenderer.class)
-public class HeldItemRendererMixin {
+public abstract class HeldItemRendererMixin {
 
     @Shadow
     private MinecraftClient client;
+
+    @Shadow private float prevEquipProgressMainHand;
+    @Shadow private float equipProgressMainHand;
+    @Shadow private float prevEquipProgressOffHand;
+    @Shadow private float equipProgressOffHand;
+    @Shadow private ItemStack mainHand;
+    @Shadow private ItemStack offHand;
+    @Shadow @Final private EntityRenderDispatcher entityRenderDispatcher;
+
+    @Shadow protected abstract void renderMapInBothHands(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, float pitch, float equipProgress, float swingProgress);
+
+    @Shadow protected abstract void renderMapInOneHand(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, float equipProgress, Arm arm, float swingProgress, ItemStack stack);
+
+    @Shadow protected abstract void applySwingOffset(MatrixStack matrices, Arm arm, float swingProgress);
+
+    @Shadow public abstract void renderItem(LivingEntity entity, ItemStack stack, ModelTransformationMode renderMode, boolean leftHanded, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light);
+
+    @Shadow protected abstract void applyBrushTransformation(MatrixStack matrices, float tickDelta, Arm arm, ItemStack stack, float equipProgress);
 
     @Unique
     private static final float EAT_OR_DRINK_X_ANGLE_MULTIPLIER = 45.0F;
@@ -36,6 +52,18 @@ public class HeldItemRendererMixin {
     private static final float EAT_OR_DRINK_Y_ANGLE_MULTIPLIER = 120.0F;
     @Unique
     private static final float EAT_OR_DRINK_Z_ANGLE_MULTIPLIER = 40.0F;
+
+    @Inject(method = "applySwingOffset", at = @At("HEAD"), cancellable = true)
+    private void applySwingOffset(MatrixStack matrices, Arm arm, float swingProgress, CallbackInfo ci) {
+        int i = arm == Arm.RIGHT ? 1 : -1;
+        float f = MathHelper.sin(0 * 0 * 3.1415927F);
+        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees((float)i * (45.0F + f * -20.0F)));
+        float g = 0;
+        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees((float)i * -45.0F));
+
+        ci.cancel();
+    }
+
 
     @Inject(method = "applyEatOrDrinkTransformation", at = @At("HEAD"), cancellable = true)
     private void applyEatOrDrinkTransformation(MatrixStack matrices, float tickDelta, Arm arm, ItemStack stack, CallbackInfo ci) {
