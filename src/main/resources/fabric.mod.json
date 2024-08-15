@@ -9,7 +9,7 @@
     "repo": "https://github.com/IDoTheHax/FirstPersonNom"
   },
   "license": "Apache-2.0",
-  "icon": "assets/firstpersonnom/icon.png",
+  "icon": "icon.png",
   "environment": "*",
   "entrypoints": {
     "client": [

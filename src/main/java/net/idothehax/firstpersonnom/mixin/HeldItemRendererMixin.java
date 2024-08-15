@@ -37,14 +37,13 @@ public class HeldItemRendererMixin {
     private static final float EAT_OR_DRINK_Z_ANGLE_MULTIPLIER = 40.0F;
 
     @Inject(method = "applyEatOrDrinkTransformation", at = @At("HEAD"), cancellable = true)
-    private void applyEatOrDrinkTransformation(MatrixStack matrices, float tickDelta, Arm arm, ItemStack stack, CallbackInfo ci) {
-        PlayerEntity player = client.player;
+    private void applyEatOrDrinkTransformation(MatrixStack matrices, float tickDelta, Arm arm, ItemStack stack, PlayerEntity player, CallbackInfo ci) {
         if (player == null) {
             return;
         }
 
         float f = (float)player.getItemUseTimeLeft() - tickDelta + 1.0F;
-        float g = f / (float)stack.getMaxUseTime();
+        float g = f / (float) stack.getMaxUseTime(player);
         float h;
         if (g < 0.8F) {
             h = MathHelper.abs(MathHelper.cos(f / 4.0F * 3.1415927F) * 0.1F);
@@ -85,8 +84,6 @@ public class HeldItemRendererMixin {
             return;
         }
 
-        this.client.getTextureManager().bindTexture(playerEntity.getSkinTexture());
-
         PlayerEntityRenderer playerRenderer = (PlayerEntityRenderer) this.client.getEntityRenderDispatcher().getRenderer(playerEntity);
         if (playerRenderer == null) {
             matrices.pop();
@@ -101,12 +98,12 @@ public class HeldItemRendererMixin {
         }
 
         // Debug: Render a small cube to represent the item
-        matrices.push();
-        matrices.translate(f * 0.05F, -0.3F, -0.15F);
-        matrices.scale(0.1F, 0.1F, 0.1F);
-        VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEntitySolid(new Identifier("minecraft", "textures/block/stone.png")));
-        MinecraftClient.getInstance().getBlockRenderManager().renderBlockAsEntity(Blocks.STONE.getDefaultState(), matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV);
-        matrices.pop();
+        //matrices.push();
+        //matrices.translate(f * 0.05F, -0.3F, -0.15F);
+        //matrices.scale(0.1F, 0.1F, 0.1F);
+        //VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEntitySolid(Ide("minecraft", "textures/block/stone.png")));
+        //MinecraftClient.getInstance().getBlockRenderManager().renderBlockAsEntity(Blocks.STONE.getDefaultState(), matrices, vertexConsumers, light, OverlayTexture.DEFAULT_UV);
+        //matrices.pop();
 
         matrices.pop();
     }
