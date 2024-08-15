@@ -56,9 +56,8 @@ public abstract class HeldItemRendererMixin {
     @Inject(method = "applySwingOffset", at = @At("HEAD"), cancellable = true)
     private void applySwingOffset(MatrixStack matrices, Arm arm, float swingProgress, CallbackInfo ci) {
         int i = arm == Arm.RIGHT ? 1 : -1;
-        float f = MathHelper.sin(0 * 0 * 3.1415927F);
+        float f = MathHelper.sin(0);
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees((float)i * (45.0F + f * -20.0F)));
-        float g = 0;
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees((float)i * -45.0F));
 
         ci.cancel();
