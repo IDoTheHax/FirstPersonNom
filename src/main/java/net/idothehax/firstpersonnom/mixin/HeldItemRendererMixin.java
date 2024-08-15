@@ -73,11 +73,11 @@ public class HeldItemRendererMixin {
         matrices.push();
 
         // Adjust the arm position
-        matrices.translate(0.125F, -0.98F, -0.5F); // Move the arm forward and slightly downward
+        matrices.translate(0.125F, -0.68F, -0.1F); // Move the arm forward and slightly downward
 
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(92.0F));
-        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(45.0F));
-        matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(f * -41.0F));
+        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90.0F));
+        matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(f * -71.0F));
 
         AbstractClientPlayerEntity playerEntity = this.client.player;
         if (playerEntity == null) {
